@@ -8,6 +8,7 @@ allowed-tools:
   - mcp__typefully__typefully_create_draft
   - mcp__typefully__typefully_edit_draft
   - mcp__typefully__typefully_list_social_sets
+  - Bash
   - mcp__protonmail__send_email
   - mcp__Claude_in_Chrome__tabs_context_mcp
   - mcp__Claude_in_Chrome__tabs_create_mcp
@@ -44,7 +45,13 @@ Collect ALL of these:
 5. **Company Instagram handle** (optional - will auto-lookup if blank)
 6. **Duration**: How long to run the campaign. Options: 24h, 48h, 1 week. Default 48h.
 7. **Typefully account**: Which account to tweet from. Show the discovered social sets. Let user pick.
-8. **Include Instagram?**: Yes/No. Warn that Instagram posting requires being logged in via Chrome and is less reliable.
+8. **Email provider**: How to send emails. Options:
+   - **Gmail CLI** (`gmail-cli` or `google-cli`) - for Gmail users. Uses `gmail-cli send` command via Bash.
+   - **Protonmail MCP** - for Protonmail users with the MCP server connected. Uses `send_email` tool.
+   - **Skip email** - only use Twitter.
+9. **Include Instagram?**: Yes/No. Warn that Instagram posting requires being logged in via Chrome and is less reliable.
+
+Store the chosen email provider as `{email_provider}` (one of: `gmail-cli`, `protonmail`, `skip`).
 
 ---
 
@@ -89,14 +96,22 @@ Post it via `typefully_create_draft`:
 - `platforms.x.posts[0].text`: the generated tweet
 - `publish_at: "now"`
 
-### Generate a test email (if email handle available)
-Write an email that:
+### Generate a test email (if email handle available and email_provider is not "skip")
+Write an email with:
 - Subject: something like "Unsolicited Call Complaint - {phone number}"
 - Body: Firm complaint referencing the phone number, requesting removal from call list, mentioning DNC registry, and noting that you are publicly tweeting about this
-- `to`: the company email
-- Send via `send_email`
 
-If `send_email` fails due to permissions, skip email and note to user that email channel is unavailable.
+Send based on the chosen email provider:
+
+**If `gmail-cli`**: Run via Bash:
+```bash
+echo "EMAIL_BODY_HERE" | gmail-cli send --to "recipient@company.com" --subject "SUBJECT_HERE"
+```
+If `gmail-cli` is not found, try `gcloud` or `msmtp` as alternatives. If none work, inform the user and skip email.
+
+**If `protonmail`**: Use the `send_email` MCP tool with `to`, `subject`, `body` fields.
+
+If sending fails for any reason, skip email and note to user that email channel is unavailable.
 
 ### Show results to user
 Display the tweet text and email content. Ask: "Test fire sent. Happy with the tone? Should I start the hourly campaign?"
@@ -134,6 +149,7 @@ You are the Spam the Spammer bot. Your job is to post ONE round of public shamin
 - Phone number: {phone number}
 - Twitter handle: {twitter handle}
 - Email: {email or "SKIP"}
+- Email provider: {email_provider} (one of: gmail-cli, protonmail, skip)
 - Instagram: {instagram handle or "SKIP"}
 - Campaign start: {ISO timestamp of when campaign was created}
 - Campaign end: {ISO timestamp of when campaign should stop}
@@ -166,14 +182,22 @@ Post via typefully_create_draft:
 - publish_at: "now"
 - All other platforms: disabled or omitted
 
-## Step 4: Generate and send email (only if email is not "SKIP")
+## Step 4: Generate and send email (only if email is not "SKIP" and email_provider is not "skip")
 Write a UNIQUE complaint email. Rules:
 - To: {email}
 - Subject: Creative but clear - reference the phone number and a day counter
 - Body: Firm complaint. Mention the phone number. Reference that you're also publicly tweeting about this. Threaten DNC/TRAI complaints. Be creative with the wording each time - don't be a boring template.
 - Keep it under 200 words
+- Email provider: {email_provider}
 
-Send via send_email. If it fails, skip silently.
+**If email_provider is "gmail-cli"**: Send via Bash:
+```bash
+echo "EMAIL_BODY" | gmail-cli send --to "{email}" --subject "SUBJECT"
+```
+
+**If email_provider is "protonmail"**: Send via send_email MCP tool.
+
+If sending fails for any reason, skip silently and continue.
 
 ## Step 5: Instagram (only if handle is not "SKIP")
 If Instagram handle is provided:
