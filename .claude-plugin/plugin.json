@@ -1,0 +1,12 @@
+{
+  "name": "spam-the-spammer",
+  "version": "1.0.0",
+  "description": "Fight back against spam callers with automated public shaming on Twitter, email, and Instagram",
+  "author": {
+    "name": "saushank",
+    "url": "https://github.com/saushank"
+  },
+  "repository": "https://github.com/saushank/spam-the-spammer",
+  "license": "MIT",
+  "keywords": ["spam", "spam-calls", "twitter", "typefully", "automation", "consumer-rights"]
+}
