@@ -9,7 +9,6 @@ allowed-tools:
   - mcp__typefully__typefully_edit_draft
   - mcp__typefully__typefully_list_social_sets
   - Bash
-  - mcp__protonmail__send_email
   - mcp__Claude_in_Chrome__tabs_context_mcp
   - mcp__Claude_in_Chrome__tabs_create_mcp
   - mcp__Claude_in_Chrome__navigate
@@ -46,12 +45,11 @@ Collect ALL of these:
 6. **Duration**: How long to run the campaign. Options: 24h, 48h, 1 week. Default 48h.
 7. **Typefully account**: Which account to tweet from. Show the discovered social sets. Let user pick.
 8. **Email provider**: How to send emails. Options:
-   - **Gmail CLI** (`gmail-cli` or `google-cli`) - for Gmail users. Uses `gmail-cli send` command via Bash.
-   - **Protonmail MCP** - for Protonmail users with the MCP server connected. Uses `send_email` tool.
+   - **Gmail CLI** (`gmail-cli`) - for Gmail users. Uses `gmail-cli send` command via Bash. Must be authenticated beforehand.
    - **Skip email** - only use Twitter.
 9. **Include Instagram?**: Yes/No. Warn that Instagram posting requires being logged in via Chrome and is less reliable.
 
-Store the chosen email provider as `{email_provider}` (one of: `gmail-cli`, `protonmail`, `skip`).
+Store the chosen email provider as `{email_provider}` (one of: `gmail-cli`, `skip`).
 
 ---
 
@@ -103,15 +101,11 @@ Write an email with:
 
 Send based on the chosen email provider:
 
-**If `gmail-cli`**: Run via Bash:
+Send via Bash:
 ```bash
 echo "EMAIL_BODY_HERE" | gmail-cli send --to "recipient@company.com" --subject "SUBJECT_HERE"
 ```
 If `gmail-cli` is not found, try `gcloud` or `msmtp` as alternatives. If none work, inform the user and skip email.
-
-**If `protonmail`**: Use the `send_email` MCP tool with `to`, `subject`, `body` fields.
-
-If sending fails for any reason, skip email and note to user that email channel is unavailable.
 
 ### Show results to user
 Display the tweet text and email content. Ask: "Test fire sent. Happy with the tone? Should I start the hourly campaign?"
@@ -149,7 +143,7 @@ You are the Spam the Spammer bot. Your job is to post ONE round of public shamin
 - Phone number: {phone number}
 - Twitter handle: {twitter handle}
 - Email: {email or "SKIP"}
-- Email provider: {email_provider} (one of: gmail-cli, protonmail, skip)
+- Email provider: {email_provider} (one of: gmail-cli, skip)
 - Instagram: {instagram handle or "SKIP"}
 - Campaign start: {ISO timestamp of when campaign was created}
 - Campaign end: {ISO timestamp of when campaign should stop}
@@ -190,12 +184,10 @@ Write a UNIQUE complaint email. Rules:
 - Keep it under 200 words
 - Email provider: {email_provider}
 
-**If email_provider is "gmail-cli"**: Send via Bash:
+Send via Bash:
 ```bash
 echo "EMAIL_BODY" | gmail-cli send --to "{email}" --subject "SUBJECT"
 ```
-
-**If email_provider is "protonmail"**: Send via send_email MCP tool.
 
 If sending fails for any reason, skip silently and continue.
 

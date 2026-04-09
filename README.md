@@ -18,8 +18,7 @@ You need these MCP tools connected in Claude Code:
 | Tool | Purpose | Required? |
 |------|---------|-----------|
 | [Typefully](https://typefully.com) | Post tweets via API | Yes |
-| Gmail CLI (`gmail-cli`) | Send complaint emails via Gmail | Optional (pick one) |
-| Protonmail MCP | Send complaint emails via Protonmail | Optional (pick one) |
+| Gmail CLI (`gmail-cli`) | Send complaint emails via Gmail | Optional |
 | Claude in Chrome | Instagram posting via browser | Optional |
 | Scheduled Tasks | Hourly recurring posts | Yes (built into Claude Code) |
 
@@ -28,7 +27,6 @@ You need these MCP tools connected in Claude Code:
 The plugin supports multiple email providers. During setup it will ask you which to use:
 
 - **Gmail CLI**: Install [`gmail-cli`](https://github.com/nickstenning/gmail-cli) or use any CLI tool that can send Gmail. Must be authenticated before running the skill.
-- **Protonmail MCP**: If you have the Protonmail MCP server connected to Claude Code.
 - **Skip**: No emails, Twitter only.
 
 ## Install
