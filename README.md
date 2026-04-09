@@ -1,41 +1,51 @@
 # Spam the Spammer
 
-A Claude Code plugin that fights back against spam callers with automated public shaming campaigns.
+Got a spam call? Fight back.
 
-When you get a spam call, run `/spam-the-spammer` and this plugin will:
+This Claude Code plugin automatically posts public shaming messages to a company's Twitter, email, and Instagram every hour until they get the message.
 
-1. Look up the company's Twitter, email, and Instagram handles
-2. Post a test tweet for your approval
-3. Set up an hourly scheduled task that generates **fresh, unique, meme-culture** shaming messages
-4. Auto-stop after your chosen duration (24h / 48h / 1 week)
+Every post is generated fresh by Claude at runtime - no templates, no repetition. Just creative, escalating internet rage.
 
-Every message is generated at runtime by Claude - no templates, no repetition. Messages escalate from witty callouts to full meme mode to community rallying with hashtags.
+## What It Does
 
-## Prerequisites
+1. You run `/spam-the-spammer`
+2. Tell it the phone number and company that spammed you
+3. It finds their Twitter, email, and Instagram handles (or you provide them)
+4. It fires a test tweet for your approval
+5. Then it posts a new, unique shaming tweet every hour automatically
+6. Campaign auto-stops after 24h, 48h, or 1 week (your choice)
 
-You need these MCP tools connected in Claude Code:
+### Escalation Tiers
 
-| Tool | Purpose | Required? |
-|------|---------|-----------|
-| [Typefully](https://typefully.com) | Post tweets via API | Yes |
-| Gmail CLI (`gmail-cli`) | Send complaint emails via Gmail | Optional |
-| Claude in Chrome | Instagram posting via browser | Optional |
-| Scheduled Tasks | Hourly recurring posts | Yes (built into Claude Code) |
+The tone automatically escalates the longer they ignore you:
 
-### Email Setup
+- **Hours 1-8**: Witty callouts - "bro I asked for peace, not a life insurance pitch"
+- **Hours 9-24**: Full meme mode - "nobody:", "POV:", ratio energy
+- **Hours 25+**: Maximum pressure - hashtags, "Day N" counters, community rallying
 
-The plugin supports multiple email providers. During setup it will ask you which to use:
+## Setup
 
-- **Gmail CLI**: Install [`gmail-cli`](https://github.com/nickstenning/gmail-cli) or use any CLI tool that can send Gmail. Must be authenticated before running the skill.
-- **Skip**: No emails, Twitter only.
+### Required
+
+- **[Claude Code](https://claude.ai/code)** - the CLI tool this plugin runs in
+- **[Typefully](https://typefully.com)** account connected as an MCP server - this is how tweets get posted
+
+### Optional
+
+- **Gmail CLI** (`gmail-cli`) - to also send complaint emails. Must be authenticated before use.
+- **Claude in Chrome** - to also post on Instagram via browser automation (flaky, but fun)
 
 ## Install
 
 ```bash
-claude plugin add saushank/spam-the-spammer
+claude plugin add saushank3poch/spam-the-spammer
 ```
 
-Or manually: clone this repo and copy the `skills/spam-the-spammer/` directory into your `~/.claude/commands/` or install as a plugin.
+Or clone and copy manually:
+```bash
+git clone https://github.com/saushank3poch/spam-the-spammer.git
+cp -r spam-the-spammer/skills/spam-the-spammer ~/.claude/commands/
+```
 
 ## Usage
 
@@ -43,43 +53,33 @@ Or manually: clone this repo and copy the `skills/spam-the-spammer/` directory i
 /spam-the-spammer
 ```
 
-Or with a company name pre-filled:
+Or with company name:
 
 ```
 /spam-the-spammer Bajaj Finance
 ```
 
-The skill will interactively ask you for:
-- Phone number that spammed you
-- Company name
-- Their social handles (or auto-looks them up)
-- How long to run the campaign
-- Which of your Typefully accounts to post from
+It will ask you for everything else interactively.
 
-## How It Works
+### Stop a Campaign
 
-### Channels
-- **Twitter/X**: Posts via Typefully API (reliable, API-based)
-- **Email**: Sends formal complaints via Protonmail (optional)
+```
+disable scheduled task spam-spammer-bajaj-finance
+```
+
+Or just tell Claude "stop the spam campaign" and it'll figure it out.
+
+## How It Works Under the Hood
+
+- **Twitter**: Creates and publishes tweets via Typefully API (reliable)
+- **Email**: Sends complaint emails via Gmail CLI (optional)
 - **Instagram**: Posts via Chrome browser automation (optional, less reliable)
+- **Scheduling**: Uses Claude Code scheduled tasks with a cron job that runs every hour
+- **Auto-stop**: A one-shot scheduled task fires at the end time and disables the campaign
 
-### Escalation Tiers
-Messages automatically escalate based on how long the campaign has been running:
+## Note on MCP Tool Names
 
-- **Tier 1 (hours 1-8)**: Witty but firm callouts
-- **Tier 2 (hours 9-24)**: Full meme mode - "nobody:", "POV:", ratio jokes
-- **Tier 3 (hours 25+)**: Maximum pressure - hashtags, community rallying, "Day N" counters
-
-### Auto-Stop
-Campaigns auto-disable after your chosen duration via a one-shot scheduled task. You can also stop manually:
-
-```
-disable scheduled task spam-spammer-{company-slug}
-```
-
-## MCP Tool Names
-
-The SKILL.md uses generic MCP tool names. If your Typefully or Protonmail MCP servers have different IDs in your Claude Code setup, update the `allowed-tools` in the SKILL.md to match. Your MCP server IDs look like `mcp__{uuid}__{tool_name}` - check your Claude Code settings.
+The plugin uses generic MCP tool names in its config. If your Typefully MCP server has a different ID in your Claude Code setup, update the `allowed-tools` in the SKILL.md to match your specific server IDs.
 
 ## License
 
